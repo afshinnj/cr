@@ -1,0 +1,78 @@
+# Data source registry. Seeded into the `data_sources` table.
+# Rate limits are design assumptions and MUST be re-verified in Milestone 3
+# against the live services (docs/13-data-sources.md).
+
+sources:
+  - code: BINANCE
+    name: Binance Spot Public API
+    kind: market
+    base_url: https://api.binance.com
+    auth_type: none
+    priority: 10
+    credibility: 1.00
+    rate_limit: { type: weight, capacity: 6000, per_seconds: 60, safety_factor: 0.6 }
+    notes: "Primary OHLCV and ticker source. WebSocket preferred over polling."
+
+  - code: BINANCE_FUTURES
+    name: Binance USDⓈ-M Futures API
+    kind: derivatives
+    base_url: https://fapi.binance.com
+    auth_type: none
+    priority: 10
+    credibility: 1.00
+    rate_limit: { type: weight, capacity: 2400, per_seconds: 60, safety_factor: 0.6 }
+    notes: "Funding rate, open interest, long/short ratio."
+
+  - code: COINGECKO
+    name: CoinGecko Demo API
+    kind: market
+    base_url: https://api.coingecko.com/api/v3
+    auth_type: api_key
+    priority: 30
+    credibility: 0.95
+    rate_limit: { type: requests, capacity: 100, per_seconds: 60, monthly_cap: 10000 }
+    notes: "Market-wide aggregates only (BTC dominance, total cap). Cache aggressively."
+
+  - code: TSETMC
+    name: Tehran Securities Exchange Technology Management Co.
+    kind: market
+    base_url: http://cdn.tsetmc.com
+    auth_type: none
+    priority: 10
+    credibility: 1.00
+    rate_limit: { type: requests, capacity: 30, per_seconds: 60, safety_factor: 0.5 }
+    notes: >-
+      No official public API. Endpoint shapes change without notice and IPs can
+      be throttled. A daily contract test must detect breakage early
+      (docs/12-risks.md D1).
+
+  - code: CODAL
+    name: Codal — official disclosures
+    kind: reference
+    base_url: https://codal.ir
+    auth_type: none
+    priority: 20
+    credibility: 1.00
+    rate_limit: { type: requests, capacity: 20, per_seconds: 60 }
+    notes: "Corporate actions and official company announcements."
+
+  - code: ALTERNATIVE_ME
+    name: Alternative.me Fear & Greed Index
+    kind: market
+    base_url: https://api.alternative.me
+    auth_type: none
+    priority: 50
+    credibility: 0.70
+    rate_limit: { type: requests, capacity: 10, per_seconds: 60 }
+    notes: "Daily crypto sentiment index."
+
+  - code: MOCK
+    name: Mock provider (tests only)
+    kind: market
+    base_url: null
+    auth_type: none
+    priority: 999
+    credibility: 0.00
+    is_enabled: false
+    rate_limit: null
+    notes: "Refused at startup when ENV=production (requirement §29)."

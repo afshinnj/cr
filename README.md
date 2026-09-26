@@ -4,8 +4,22 @@
 
 سامانه Desktop پایش، تحلیل و رتبه‌بندی بازار بورس ایران و ارزهای دیجیتال.
 
-> **وضعیت فعلی: فاز طراحی (Design Phase) — بدون کد Production**
-> مطابق بند ۳۱ سند نیازمندی، ابتدا معماری کامل ارائه شده است. پیاده‌سازی پس از تأیید، Milestone به Milestone آغاز می‌شود.
+> **وضعیت فعلی: Milestone 1 و 2 تکمیل شد** — ([`docs/18-milestone-status.md`](docs/18-milestone-status.md))
+> معماری کامل تأیید شده و پیاده‌سازی Milestone به Milestone در جریان است. Milestone بعدی: **M3 — Market Data Providers**.
+
+## اجرای سریع
+
+```bash
+cp .env.example .env     # سپس LOCAL_API_TOKEN و POSTGRES_PASSWORD را پر کنید
+make token               # تولید توکن تصادفی
+make up                  # postgres+timescale، redis، ollama، backend
+make pull-model          # دانلود مدل محلی
+make seed                # داده مرجع (صرافی‌ها، منابع، نمادها، پروفایل امتیازدهی)
+make check               # lint + mypy strict + قوانین معماری + تست‌ها
+```
+
+- API: `http://localhost:8787/docs`
+- سلامت: `http://localhost:8787/api/v1/health/deep`
 
 ---
 
@@ -45,6 +59,21 @@
 | [`docs/15-success-metrics.md`](docs/15-success-metrics.md) | معیارهای موفقیت |
 | [`docs/16-scoring-and-risk.md`](docs/16-scoring-and-risk.md) | فرمول‌های Scoring و Risk |
 | [`docs/17-decision-log.md`](docs/17-decision-log.md) | ADR — تصمیمات معماری |
+| [`docs/18-milestone-status.md`](docs/18-milestone-status.md) | وضعیت پیاده‌سازی و DoD هر Milestone |
+
+---
+
+## ساختار فعلی مخزن
+
+```
+backend/app/    core · api · models · database · schemas · services   (۴۰ جدول، mypy strict)
+backend/alembic initial schema + timescale hypertables
+config/         markets · scoring · sources · universe   (هیچ وزنی در کد hard-code نشده)
+scripts/        seed_reference_data · check_architecture
+tests/          unit (۱۵۲ تست) + integration (TimescaleDB)
+docker/         backend.Dockerfile · postgres/init.sql
+docs/           ۱۹ سند معماری
+```
 
 ---
 
