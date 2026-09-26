@@ -1,0 +1,114 @@
+# Seed values for the scoring profiles stored in the `scoring_profiles` table.
+# The database is the source of truth at runtime (ADR-007); this file only
+# bootstraps the first profiles. Never read these numbers directly from the
+# engine — always load the active profile from the database.
+
+profiles:
+  - name: default_crypto
+    market_type: crypto
+    is_active: true
+    notes: "Baseline weights for crypto. Not yet optimised — see docs/16 §16.4."
+    weights:
+      technical: 0.22
+      momentum: 0.15
+      volume: 0.12
+      market: 0.13
+      news: 0.12
+      sentiment: 0.08
+      liquidity: 0.08
+      ml: 0.10
+      # How strongly the risk score discounts the final opportunity score.
+      risk_beta: 0.40
+      confidence:
+        statistical: 0.35
+        data: 0.25
+        agreement: 0.25
+        ai: 0.15
+      news_impact:
+        source_count: 0.25
+        source_credibility: 0.20
+        sentiment_magnitude: 0.20
+        category_weight: 0.20
+        velocity: 0.10
+        asset_relevance: 0.05
+      # Exponential news decay constant, in hours.
+      news_decay_tau_hours: 12
+      risk:
+        vol_percentile: 0.20
+        illiquidity: 0.15
+        drawdown_30d: 0.15
+        regime_penalty: 0.15
+        news_risk: 0.10
+        crowding: 0.15
+        gap_halt_risk: 0.00
+        data_uncertainty: 0.10
+    thresholds:
+      buy_candidate: { final: 75, rr_min: 1.8, risk_max: 45, confidence_min: 0.60 }
+      watch: { final: 60, rr_min: 1.2 }
+      avoid: { risk_min: 75 }
+      veto:
+        rr_min: 1.2
+        min_liquidity_score: 30
+        min_data_completeness: 0.60
+        max_vol_percentile: 0.90
+      risk_levels:
+        atr_period: 14
+        stop_atr_multiple: 1.5
+        tp1_atr_multiple: 2.0
+        tp2_atr_multiple: 3.5
+
+  - name: default_iran_stock
+    market_type: iran_stock
+    is_active: true
+    notes: "Liquidity and retail/institutional flow matter more; derivatives data absent."
+    weights:
+      technical: 0.22
+      momentum: 0.13
+      volume: 0.12
+      market: 0.15
+      news: 0.10
+      sentiment: 0.10
+      liquidity: 0.13
+      ml: 0.05
+      risk_beta: 0.45
+      confidence:
+        statistical: 0.30
+        data: 0.30
+        agreement: 0.25
+        ai: 0.15
+      news_impact:
+        source_count: 0.20
+        source_credibility: 0.30
+        sentiment_magnitude: 0.20
+        category_weight: 0.20
+        velocity: 0.05
+        asset_relevance: 0.05
+      news_decay_tau_hours: 48
+      risk:
+        vol_percentile: 0.15
+        illiquidity: 0.20
+        drawdown_30d: 0.15
+        regime_penalty: 0.15
+        news_risk: 0.10
+        crowding: 0.00
+        gap_halt_risk: 0.15
+        data_uncertainty: 0.10
+    thresholds:
+      buy_candidate: { final: 75, rr_min: 2.0, risk_max: 40, confidence_min: 0.60 }
+      watch: { final: 60, rr_min: 1.3 }
+      avoid: { risk_min: 70 }
+      veto:
+        rr_min: 1.3
+        min_liquidity_score: 40
+        min_data_completeness: 0.60
+        max_vol_percentile: 0.90
+        # Tehran-specific: a locked order queue means the signal is unexecutable.
+        block_when_queued: true
+        block_when_halted: true
+      risk_levels:
+        atr_period: 14
+        stop_atr_multiple: 1.5
+        tp1_atr_multiple: 2.0
+        tp2_atr_multiple: 3.5
+        # Stop must sit outside one day of the price limit band.
+        min_stop_distance_pct: 5.0

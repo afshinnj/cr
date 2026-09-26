@@ -1,0 +1,92 @@
+# Tracked asset universe. Profile selected via UNIVERSE_PROFILE in .env.
+# Current project scope: `small` (confirmed in ADR O1).
+#
+# Iranian symbols are keyed by their TSETMC instrument code (ins_code), which is
+# stable across symbol renames; the Persian symbol is only a display label and
+# is verified during seeding.
+
+profiles:
+  small:
+    description: "Phase-1 scope: fast to backfill, enough breadth to evaluate the system."
+    crypto:
+      exchange: BINANCE
+      quote: USDT
+      symbols:
+        - BTCUSDT
+        - ETHUSDT
+        - BNBUSDT
+        - SOLUSDT
+        - XRPUSDT
+        - ADAUSDT
+        - DOGEUSDT
+        - AVAXUSDT
+        - LINKUSDT
+        - DOTUSDT
+        - MATICUSDT
+        - LTCUSDT
+        - TRXUSDT
+        - ATOMUSDT
+        - NEARUSDT
+        - UNIUSDT
+        - FILUSDT
+        - APTUSDT
+        - ARBUSDT
+        - OPUSDT
+        - INJUSDT
+        - SUIUSDT
+        - TIAUSDT
+        - RNDRUSDT
+        - FTMUSDT
+        - AAVEUSDT
+        - ETCUSDT
+        - BCHUSDT
+        - ICPUSDT
+        - SEIUSDT
+    iran_stock:
+      exchange: TSE
+      # ins_code values are resolved and verified during `make seed`; the list
+      # below is the target watchlist by symbol, resolved through TSETMC search.
+      symbols:
+        - { symbol: "فولاد", name_fa: "فولاد مباركه اصفهان", sector: "فلزات اساسی" }
+        - { symbol: "فملی", name_fa: "ملی صنایع مس ایران", sector: "فلزات اساسی" }
+        - { symbol: "شپنا", name_fa: "پالایش نفت اصفهان", sector: "فرآورده‌های نفتی" }
+        - { symbol: "شبندر", name_fa: "پالایش نفت بندرعباس", sector: "فرآورده‌های نفتی" }
+        - { symbol: "شتران", name_fa: "پالایش نفت تهران", sector: "فرآورده‌های نفتی" }
+        - { symbol: "خودرو", name_fa: "ایران خودرو", sector: "خودرو و قطعات" }
+        - { symbol: "خساپا", name_fa: "سایپا", sector: "خودرو و قطعات" }
+        - { symbol: "وبملت", name_fa: "بانک ملت", sector: "بانک‌ها" }
+        - { symbol: "وتجارت", name_fa: "بانک تجارت", sector: "بانک‌ها" }
+        - { symbol: "وبصادر", name_fa: "بانک صادرات ایران", sector: "بانک‌ها" }
+        - { symbol: "فارس", name_fa: "صنایع پتروشیمی خلیج فارس", sector: "شیمیایی" }
+        - { symbol: "نوری", name_fa: "پتروشیمی نوری", sector: "شیمیایی" }
+        - { symbol: "شستا", name_fa: "سرمایه‌گذاری تأمین اجتماعی", sector: "چندرشته‌ای صنعتی" }
+        - { symbol: "اخابر", name_fa: "مخابرات ایران", sector: "مخابرات" }
+        - { symbol: "همراه", name_fa: "ارتباطات سیار ایران", sector: "مخابرات" }
+        - { symbol: "کگل", name_fa: "معدنی و صنعتی گل گهر", sector: "استخراج کانه‌های فلزی" }
+        - { symbol: "کچاد", name_fa: "معدنی و صنعتی چادرملو", sector: "استخراج کانه‌های فلزی" }
+        - { symbol: "تاپیکو", name_fa: "سرمایه‌گذاری نفت و گاز تأمین", sector: "چندرشته‌ای صنعتی" }
+        - { symbol: "پارسان", name_fa: "گسترش نفت و گاز پارسیان", sector: "چندرشته‌ای صنعتی" }
+        - { symbol: "رمپنا", name_fa: "گروه مپنا", sector: "پیمانکاری صنعتی" }
+        - { symbol: "شپدیس", name_fa: "پتروشیمی پردیس", sector: "شیمیایی" }
+        - { symbol: "جم", name_fa: "پتروشیمی جم", sector: "شیمیایی" }
+        - { symbol: "وغدیر", name_fa: "سرمایه‌گذاری غدیر", sector: "چندرشته‌ای صنعتی" }
+        - { symbol: "شیران", name_fa: "صنایع شیمیایی ایران", sector: "شیمیایی" }
+        - { symbol: "مبین", name_fa: "پتروشیمی مبین", sector: "شیمیایی" }
+        - { symbol: "حکشتی", name_fa: "کشتیرانی جمهوری اسلامی ایران", sector: "حمل و نقل" }
+        - { symbol: "وپاسار", name_fa: "بانک پاسارگاد", sector: "بانک‌ها" }
+        - { symbol: "کاوه", name_fa: "فولاد کاوه جنوب کیش", sector: "فلزات اساسی" }
+        - { symbol: "فخوز", name_fa: "فولاد خوزستان", sector: "فلزات اساسی" }
+        - { symbol: "ومعادن", name_fa: "توسعه معادن و فلزات", sector: "استخراج کانه‌های فلزی" }
+      indices:
+        - { code: "TSE_TOTAL", name_fa: "شاخص کل", ins_code: "32097828799138957" }
+        - { code: "TSE_EQUAL_WEIGHT", name_fa: "شاخص کل (هم وزن)", ins_code: "67130298613737946" }
+
+  medium:
+    description: "Broader coverage once phase-1 metrics are green."
+    crypto: { exchange: BINANCE, quote: USDT, top_n_by_volume: 100 }
+    iran_stock: { exchange: TSE, top_n_by_trade_value: 200 }
+
+  full:
+    description: "Full coverage. Review storage estimates in docs/03 §3.4 first."
+    crypto: { exchange: BINANCE, quote: USDT, top_n_by_volume: 100 }
+    iran_stock: { exchange: TSE, all_tracked: true }

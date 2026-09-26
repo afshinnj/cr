@@ -1,0 +1,45 @@
+# Market calendars, trading costs and market-specific execution rules.
+# Referenced by collectors (scheduling), the backtester (execution realism)
+# and the risk engine. No value here may be duplicated in Python code.
+
+markets:
+  crypto:
+    timezone: UTC
+    always_open: true
+    costs:
+      taker_fee_pct: 0.10
+      maker_fee_pct: 0.10
+      # Fallback spread estimate when no order book snapshot is available.
+      default_spread_pct: 0.02
+      slippage_model: sqrt_participation
+      slippage_k: 0.5
+    execution:
+      max_participation_of_bar_volume: 0.05
+      decision_to_fill_delay_bars: 1
+
+  iran_stock:
+    timezone: Asia/Tehran
+    always_open: false
+    session:
+      # Tehran Stock Exchange continuous trading session.
+      open: "09:00"
+      close: "12:30"
+      pre_open: "08:45"
+      weekdays: [5, 6, 0, 1, 2]   # Sat, Sun, Mon, Tue, Wed (Python weekday numbering)
+    costs:
+      # Round-trip brokerage + regulatory fees. Verify against the current
+      # official schedule before relying on backtest results.
+      buy_fee_pct: 0.37
+      sell_fee_pct: 0.88
+      default_spread_pct: 0.10
+      slippage_model: queue_aware
+    execution:
+      # Daily price limit. Orders outside the band are rejected.
+      price_limit_pct: 5.0
+      price_limit_pct_base_market: 10.0
+      # When the bid queue is locked at the upper limit, buys cannot fill.
+      model_order_queue: true
+      halt_blocks_execution: true
+      max_participation_of_bar_volume: 0.05
+      decision_to_fill_delay_bars: 1
+    holidays_source: config/iran_holidays.yaml
